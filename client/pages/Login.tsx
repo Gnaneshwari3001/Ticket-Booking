@@ -26,12 +26,68 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [loginMethod, setLoginMethod] = useState<"email" | "phone">("email");
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  // Form states
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [phone, setPhone] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [dateOfBirth, setDateOfBirth] = useState("");
+
+  const { login, signup, resetPassword } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError("");
     setIsLoading(true);
-    // Simulate API call
-    setTimeout(() => setIsLoading(false), 2000);
+
+    try {
+      await login(email, password);
+      setSuccess("Login successful!");
+      setTimeout(() => navigate("/"), 1000);
+    } catch (error: any) {
+      setError(error.message || "Failed to login");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleSignup = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+    setIsLoading(true);
+
+    try {
+      await signup(email, password, {
+        displayName: `${firstName} ${lastName}`,
+        phoneNumber: phone,
+        dateOfBirth
+      });
+      setSuccess("Account created successfully!");
+      setTimeout(() => navigate("/"), 1000);
+    } catch (error: any) {
+      setError(error.message || "Failed to create account");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleForgotPassword = async () => {
+    if (!email) {
+      setError("Please enter your email address first");
+      return;
+    }
+
+    try {
+      await resetPassword(email);
+      setSuccess("Password reset email sent!");
+    } catch (error: any) {
+      setError(error.message || "Failed to send reset email");
+    }
   };
 
   return (
