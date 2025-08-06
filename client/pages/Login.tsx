@@ -148,7 +148,19 @@ export default function Login() {
 
               {/* Login Tab */}
               <TabsContent value="login" className="space-y-4">
-                <form onSubmit={handleSubmit} className="space-y-4">
+                {/* Error/Success Messages */}
+                {error && (
+                  <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md text-sm">
+                    {error}
+                  </div>
+                )}
+                {success && (
+                  <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-md text-sm">
+                    {success}
+                  </div>
+                )}
+
+                <form onSubmit={handleLogin} className="space-y-4">
                   {/* Login Method Toggle */}
                   <div className="flex space-x-2">
                     <Button
