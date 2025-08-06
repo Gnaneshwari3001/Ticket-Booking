@@ -251,8 +251,16 @@ export default function Index() {
               </div>
 
               {/* Search Button */}
-              <Button asChild size="lg" className="w-full h-14 text-lg font-semibold">
-                <Link to="/search-results" className="flex items-center gap-2">
+              <Button
+                asChild
+                size="lg"
+                className="w-full h-14 text-lg font-semibold"
+                disabled={!fromStation || !toStation || !journeyDate}
+              >
+                <Link
+                  to={`/enhanced-search-results?from=${fromStation}&to=${toStation}&date=${journeyDate}&class=${travelClass}&quota=${quota}`}
+                  className="flex items-center gap-2"
+                >
                   <Search className="h-5 w-5" />
                   Search Trains
                 </Link>
