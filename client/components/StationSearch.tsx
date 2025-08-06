@@ -53,8 +53,8 @@ export function StationSearch({
 
   // Group stations by state for better organization
   const groupedStations = useMemo(() => {
-    const groups: { [key: string]: typeof MAJOR_STATIONS } = {};
-    
+    const groups: { [key: string]: StationData[] } = {};
+
     filteredStations.forEach(station => {
       if (!groups[station.state]) {
         groups[station.state] = [];
@@ -66,9 +66,9 @@ export function StationSearch({
     return Object.keys(groups)
       .sort()
       .reduce((acc, state) => {
-        acc[state] = groups[state].sort((a, b) => a.stationName.localeCompare(b.stationName));
+        acc[state] = groups[state].sort((a, b) => a.station_name.localeCompare(b.station_name));
         return acc;
-      }, {} as { [key: string]: typeof MAJOR_STATIONS });
+      }, {} as { [key: string]: StationData[] });
   }, [filteredStations]);
 
   const handleStationSelect = (station: typeof MAJOR_STATIONS[0]) => {
