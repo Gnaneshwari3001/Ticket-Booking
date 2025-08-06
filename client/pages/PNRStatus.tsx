@@ -26,50 +26,101 @@ export default function PNRStatus() {
   const [isLoading, setIsLoading] = useState(false);
   const [searchResult, setSearchResult] = useState<any>(null);
 
-  const handleSearch = (e: React.FormEvent) => {
+  const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
     if (pnrNumber.length !== 10) return;
-    
+
     setIsLoading(true);
-    
-    // Simulate API call with mock data
-    setTimeout(() => {
-      setSearchResult({
-        pnr: pnrNumber,
-        trainNumber: "12951",
-        trainName: "Mumbai Rajdhani",
-        from: "New Delhi (NDLS)",
-        to: "Mumbai Central (BCT)",
-        dateOfJourney: "15-Dec-2024",
-        class: "3A",
-        quota: "GN",
-        bookingStatus: "CNF",
-        currentStatus: "CNF",
-        distance: "1384 km",
-        passengers: [
-          {
-            name: "PASSENGER 1",
-            age: 35,
-            gender: "M",
-            bookingStatus: "CNF/B2/25",
-            currentStatus: "CNF/B2/25"
-          },
-          {
-            name: "PASSENGER 2", 
-            age: 32,
-            gender: "F",
-            bookingStatus: "CNF/B2/26",
-            currentStatus: "CNF/B2/26"
-          }
-        ],
-        fare: 2540,
-        bookingDate: "10-Dec-2024",
-        departureTime: "16:55",
-        arrivalTime: "08:35",
-        totalTime: "15h 40m"
-      });
+
+    try {
+      // First try to get from PNR status collection
+      let pnrStatus = await pnrService.getPNRStatus(pnrNumber);
+
+      if (!pnrStatus) {
+        // If not found, try to get from bookings
+        const booking = await bookingService.getBookingByPNR(pnrNumber);
+        if (booking) {
+          pnrStatus = {
+            pnr: pnrNumber,
+            currentStatus: booking.status,
+            passengers: booking.passengers.map(p => ({
+              ...p,
+              bookingStatus: booking.status,
+              currentStatus: booking.status
+            })),
+            lastUpdated: booking.updatedAt
+          };
+        }
+      }
+
+      if (pnrStatus) {
+        // Get booking details for additional info
+        const booking = await bookingService.getBookingByPNR(pnrNumber);
+        if (booking) {
+          setSearchResult({
+            pnr: pnrNumber,
+            trainNumber: booking.trainNumber,
+            trainName: booking.trainName,
+            from: booking.from,
+            to: booking.to,
+            dateOfJourney: booking.journeyDate,
+            class: booking.class,
+            quota: booking.quota,
+            bookingStatus: booking.status,
+            currentStatus: pnrStatus.currentStatus,
+            distance: "1384 km", // This would come from train data
+            passengers: pnrStatus.passengers,
+            fare: booking.totalFare,
+            bookingDate: booking.bookingDate.toDate().toLocaleDateString(),
+            departureTime: "16:55", // This would come from train data
+            arrivalTime: "08:35", // This would come from train data
+            totalTime: "15h 40m" // This would come from train data
+          });
+        }
+      } else {
+        // Fallback to demo data for testing
+        setSearchResult({
+          pnr: pnrNumber,
+          trainNumber: "12951",
+          trainName: "Mumbai Rajdhani",
+          from: "New Delhi (NDLS)",
+          to: "Mumbai Central (BCT)",
+          dateOfJourney: "15-Dec-2024",
+          class: "3A",
+          quota: "GN",
+          bookingStatus: "CNF",
+          currentStatus: "CNF",
+          distance: "1384 km",
+          passengers: [
+            {
+              name: "PASSENGER 1",
+              age: 35,
+              gender: "M",
+              bookingStatus: "CNF/B2/25",
+              currentStatus: "CNF/B2/25"
+            },
+            {
+              name: "PASSENGER 2",
+              age: 32,
+              gender: "F",
+              bookingStatus: "CNF/B2/26",
+              currentStatus: "CNF/B2/26"
+            }
+          ],
+          fare: 2540,
+          bookingDate: "10-Dec-2024",
+          departureTime: "16:55",
+          arrivalTime: "08:35",
+          totalTime: "15h 40m"
+        });
+      }
+    } catch (error) {
+      console.error('Error searching PNR:', error);
+      // Show error message or fallback to demo data
+      setSearchResult(null);
+    } finally {
       setIsLoading(false);
-    }, 1500);
+    }
   };
 
   const getStatusIcon = (status: string) => {
