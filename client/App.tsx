@@ -9,6 +9,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Header } from "./components/Header";
 import Index from "./pages/Index";
 import Login from "./pages/Login";
+import PNRStatus from "./pages/PNRStatus";
 import NotFound from "./pages/NotFound";
 import Placeholder from "./pages/Placeholder";
 
