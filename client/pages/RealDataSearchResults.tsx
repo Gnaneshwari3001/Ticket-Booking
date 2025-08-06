@@ -652,12 +652,21 @@ export default function RealDataSearchResults() {
                                       : details.status
                                     }
                                   </p>
-                                  <Button 
-                                    size="sm" 
+                                  <Button
+                                    size="sm"
                                     className="w-full"
                                     disabled={!details.status.includes("Available")}
+                                    asChild={details.status.includes("Available")}
                                   >
-                                    {details.status.includes("Available") ? "Book" : "Not Available"}
+                                    {details.status.includes("Available") ? (
+                                      <Link
+                                        to={`/booking?train=${train.train_number}&from=${fromStation}&to=${toStation}&date=${journeyDate}&class=${classCode}`}
+                                      >
+                                        Book
+                                      </Link>
+                                    ) : (
+                                      "Not Available"
+                                    )}
                                   </Button>
                                 </div>
                               </Card>
