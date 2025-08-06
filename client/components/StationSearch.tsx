@@ -40,22 +40,15 @@ export function StationSearch({
   const [searchQuery, setSearchQuery] = useState("");
 
   // Find current station details
-  const currentStation = MAJOR_STATIONS.find(
-    station => station.stationCode === value || station.stationName === value
+  const currentStation = RailwayDataService.getAllStations().find(
+    station => station.station_code === value || station.station_name === value
   );
 
   // Filter stations based on search query
   const filteredStations = useMemo(() => {
-    if (!searchQuery) return MAJOR_STATIONS.slice(0, 20); // Show top 20 by default
-    
-    const query = searchQuery.toLowerCase();
-    return MAJOR_STATIONS.filter(
-      station =>
-        station.stationName.toLowerCase().includes(query) ||
-        station.stationCode.toLowerCase().includes(query) ||
-        station.city.toLowerCase().includes(query) ||
-        station.state.toLowerCase().includes(query)
-    ).slice(0, 50); // Limit to 50 results
+    if (!searchQuery) return RailwayDataService.getAllStations().slice(0, 20); // Show top 20 by default
+
+    return RailwayDataService.searchStations(searchQuery).slice(0, 50); // Limit to 50 results
   }, [searchQuery]);
 
   // Group stations by state for better organization
