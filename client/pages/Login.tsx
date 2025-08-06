@@ -36,6 +36,7 @@ export default function Login() {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [dateOfBirth, setDateOfBirth] = useState("");
+  const [termsAccepted, setTermsAccepted] = useState(false);
 
   const { login, signup, resetPassword } = useAuth();
   const navigate = useNavigate();
