@@ -93,9 +93,9 @@ export function StationSearch({
           >
             {currentStation ? (
               <div className="flex flex-col items-start">
-                <span className="font-medium">{currentStation.stationName}</span>
+                <span className="font-medium">{currentStation.station_name}</span>
                 <span className="text-xs text-muted-foreground">
-                  {currentStation.stationCode} • {currentStation.city}, {currentStation.state}
+                  {currentStation.station_code} • {currentStation.city}, {currentStation.state}
                 </span>
               </div>
             ) : (
