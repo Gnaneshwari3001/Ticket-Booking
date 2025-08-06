@@ -57,6 +57,12 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
+        railway: {
+          blue: "hsl(var(--railway-blue))",
+          orange: "hsl(var(--railway-orange))",
+          green: "hsl(var(--railway-green))",
+          gray: "hsl(var(--railway-gray))",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",
