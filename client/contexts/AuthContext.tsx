@@ -186,12 +186,15 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   // Load user profile from Firestore
   const loadUserProfile = async (user: User) => {
     try {
+      // Try to get user profile from Firestore
       const userDoc = await getDoc(doc(db, 'users', user.uid));
       if (userDoc.exists()) {
         const profileData = userDoc.data() as UserProfile;
         setUserProfile(profileData);
+        console.log("User profile loaded from Firestore");
       } else {
         // Create basic profile if it doesn't exist
+        console.log("Creating new user profile...");
         const basicProfile: UserProfile = {
           uid: user.uid,
           email: user.email,
@@ -202,11 +205,56 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
           createdAt: new Date(),
           lastLogin: new Date()
         };
-        await setDoc(doc(db, 'users', user.uid), basicProfile);
-        setUserProfile(basicProfile);
+
+        try {
+          await setDoc(doc(db, 'users', user.uid), basicProfile);
+          setUserProfile(basicProfile);
+          console.log("New user profile created successfully");
+        } catch (createError) {
+          console.warn("Failed to create user profile in Firestore, using local profile:", createError);
+          setUserProfile(basicProfile);
+        }
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error loading user profile:', error);
+
+      // Handle offline or connectivity issues
+      if (error.code === 'failed-precondition' ||
+          error.code === 'unavailable' ||
+          error.message?.includes('offline') ||
+          error.message?.includes('client is offline')) {
+
+        console.log("Firebase is offline, creating temporary user profile");
+
+        // Create a basic profile from Firebase Auth data when offline
+        const offlineProfile: UserProfile = {
+          uid: user.uid,
+          email: user.email,
+          displayName: user.displayName,
+          phoneNumber: user.phoneNumber,
+          photoURL: user.photoURL,
+          kycVerified: false,
+          createdAt: new Date(),
+          lastLogin: new Date()
+        };
+
+        setUserProfile(offlineProfile);
+      } else {
+        // For other errors, still create a basic profile to not break the app
+        console.warn("Unknown Firestore error, creating fallback profile");
+        const fallbackProfile: UserProfile = {
+          uid: user.uid,
+          email: user.email,
+          displayName: user.displayName,
+          phoneNumber: user.phoneNumber,
+          photoURL: user.photoURL,
+          kycVerified: false,
+          createdAt: new Date(),
+          lastLogin: new Date()
+        };
+
+        setUserProfile(fallbackProfile);
+      }
     }
   };
 
