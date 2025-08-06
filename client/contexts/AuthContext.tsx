@@ -123,10 +123,10 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   // Sign in with email and password
   const login = async (email: string, password: string) => {
     await signInWithEmailAndPassword(auth, email, password);
-    
+
     // Update last login
     if (auth.currentUser) {
-      await updateLastLogin(auth.currentUser.uid);
+      await userService.updateLastLogin(auth.currentUser.uid);
     }
   };
 
