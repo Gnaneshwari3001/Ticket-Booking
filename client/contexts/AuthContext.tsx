@@ -13,8 +13,8 @@ import {
   signInWithPhoneNumber,
   ConfirmationResult
 } from 'firebase/auth';
-import { doc, setDoc, getDoc } from 'firebase/firestore';
-import { auth, db } from '@/lib/firebase';
+import { auth } from '@/lib/firebase';
+import { userService, UserProfile as DatabaseUserProfile } from '@/lib/realtime-database';
 
 interface UserProfile {
   uid: string;
@@ -28,8 +28,8 @@ interface UserProfile {
   emergencyContact?: string;
   preferredClass?: string;
   kycVerified?: boolean;
-  createdAt: Date;
-  lastLogin: Date;
+  createdAt: any;
+  lastLogin: any;
 }
 
 interface AuthContextType {
@@ -78,7 +78,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         await updateProfile(user, { displayName: userData.displayName });
       }
 
-      // Create user profile in Firestore
+      // Create user profile in Realtime Database
       const profile: UserProfile = {
         uid: user.uid,
         email: user.email,
@@ -91,18 +91,18 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         emergencyContact: userData.emergencyContact,
         preferredClass: userData.preferredClass || '3A',
         kycVerified: false,
-        createdAt: new Date(),
-        lastLogin: new Date()
+        createdAt: new Date().toISOString(),
+        lastLogin: new Date().toISOString()
       };
 
-      console.log("Creating user profile in Firestore...");
+      console.log("Creating user profile in Realtime Database...");
       try {
-        await setDoc(doc(db, 'users', user.uid), profile);
+        await userService.createOrUpdateUser(profile);
         console.log("User profile created successfully");
         setUserProfile(profile);
-      } catch (firestoreError) {
-        console.warn("Failed to create user profile in Firestore:", firestoreError);
-        // Don't fail the signup if Firestore fails, just log the error
+      } catch (databaseError) {
+        console.warn("Failed to create user profile in Realtime Database:", databaseError);
+        // Don't fail the signup if database fails, just log the error
         setUserProfile({
           uid: user.uid,
           email: user.email,
@@ -110,8 +110,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
           phoneNumber: userData.phoneNumber || null,
           photoURL: null,
           kycVerified: false,
-          createdAt: new Date(),
-          lastLogin: new Date()
+          createdAt: new Date().toISOString(),
+          lastLogin: new Date().toISOString()
         });
       }
     } catch (error) {
