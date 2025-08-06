@@ -32,6 +32,7 @@ const App = () => (
           <Route path="/login" element={<Login />} />
           <Route path="/search-results" element={<SearchResults />} />
           <Route path="/enhanced-search-results" element={<EnhancedSearchResults />} />
+          <Route path="/real-data-search-results" element={<RealDataSearchResults />} />
           <Route path="/pnr-status" element={<PNRStatus />} />
           <Route
             path="/booking-history"
