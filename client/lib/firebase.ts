@@ -27,4 +27,38 @@ export const storage = getStorage(app);
 // Initialize Analytics (only in browser environment)
 export const analytics = typeof window !== 'undefined' ? getAnalytics(app) : null;
 
+// Add connection monitoring
+if (typeof window !== 'undefined') {
+  // Monitor online/offline status
+  window.addEventListener('online', async () => {
+    console.log('Connection restored, enabling Firestore network');
+    try {
+      await enableNetwork(db);
+    } catch (error) {
+      console.warn('Failed to enable Firestore network:', error);
+    }
+  });
+
+  window.addEventListener('offline', async () => {
+    console.log('Connection lost, disabling Firestore network');
+    try {
+      await disableNetwork(db);
+    } catch (error) {
+      console.warn('Failed to disable Firestore network:', error);
+    }
+  });
+}
+
+// Helper function to check if Firebase is available
+export const isFirebaseAvailable = async (): Promise<boolean> => {
+  try {
+    // Try a simple operation to test connectivity
+    await enableNetwork(db);
+    return true;
+  } catch (error) {
+    console.warn('Firebase unavailable:', error);
+    return false;
+  }
+};
+
 export default app;
