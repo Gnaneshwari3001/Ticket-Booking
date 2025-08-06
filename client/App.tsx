@@ -35,6 +35,8 @@ const App = () => (
           <Route path="/search-results" element={<SearchResults />} />
           <Route path="/enhanced-search-results" element={<EnhancedSearchResults />} />
           <Route path="/real-data-search-results" element={<RealDataSearchResults />} />
+          <Route path="/booking" element={<BookingPage />} />
+          <Route path="/booking-success" element={<BookingSuccess />} />
           <Route path="/pnr-status" element={<PNRStatus />} />
           <Route
             path="/booking-history"
