@@ -196,8 +196,14 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   // Update last login timestamp
   const updateLastLogin = async (uid: string) => {
-    const userRef = doc(db, 'users', uid);
-    await setDoc(userRef, { lastLogin: new Date() }, { merge: true });
+    try {
+      const userRef = doc(db, 'users', uid);
+      await setDoc(userRef, { lastLogin: new Date() }, { merge: true });
+      console.log("Last login updated");
+    } catch (error: any) {
+      console.warn("Failed to update last login:", error);
+      // Don't throw error for last login updates - it's not critical
+    }
   };
 
   // Load user profile from Firestore
