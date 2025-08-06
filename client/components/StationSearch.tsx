@@ -71,8 +71,8 @@ export function StationSearch({
       }, {} as { [key: string]: StationData[] });
   }, [filteredStations]);
 
-  const handleStationSelect = (station: typeof MAJOR_STATIONS[0]) => {
-    onChange(station.stationCode, station.stationName);
+  const handleStationSelect = (station: StationData) => {
+    onChange(station.station_code, station.station_name);
     setOpen(false);
     setSearchQuery("");
   };
