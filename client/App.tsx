@@ -17,6 +17,8 @@ import EnhancedSearchResults from "./pages/EnhancedSearchResults";
 import RealDataSearchResults from "./pages/RealDataSearchResults";
 import BookingPage from "./pages/BookingPage";
 import BookingSuccess from "./pages/BookingSuccess";
+import BookingHistory from "./pages/BookingHistory";
+import LiveTracking from "./pages/LiveTracking";
 import NotFound from "./pages/NotFound";
 import Placeholder from "./pages/Placeholder";
 
