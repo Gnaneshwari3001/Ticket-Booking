@@ -244,9 +244,13 @@ export default function Login() {
                       <Checkbox id="remember" />
                       <Label htmlFor="remember" className="text-sm">Remember me</Label>
                     </div>
-                    <Link to="/forgot-password" className="text-sm text-railway-blue hover:underline">
+                    <button
+                      type="button"
+                      onClick={handleForgotPassword}
+                      className="text-sm text-railway-blue hover:underline"
+                    >
                       Forgot password?
-                    </Link>
+                    </button>
                   </div>
 
                   {/* Login Button */}
