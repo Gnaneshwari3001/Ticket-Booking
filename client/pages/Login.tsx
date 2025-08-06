@@ -360,6 +360,8 @@ export default function Login() {
                         id="signup-password"
                         type={showPassword ? "text" : "password"}
                         placeholder="Create a strong password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
                         required
                         className="pl-10 pr-10"
                       />
