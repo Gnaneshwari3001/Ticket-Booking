@@ -140,6 +140,18 @@ export default function Login() {
             <p className="text-muted-foreground">Sign in to your RailEase account</p>
           </CardHeader>
           <CardContent>
+            {/* Error/Success Messages - Show for both tabs */}
+            {error && (
+              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md text-sm mb-4">
+                {error}
+              </div>
+            )}
+            {success && (
+              <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-md text-sm mb-4">
+                {success}
+              </div>
+            )}
+
             <Tabs defaultValue="login" className="w-full">
               <TabsList className="grid w-full grid-cols-2">
                 <TabsTrigger value="login">Login</TabsTrigger>
@@ -148,17 +160,6 @@ export default function Login() {
 
               {/* Login Tab */}
               <TabsContent value="login" className="space-y-4">
-                {/* Error/Success Messages */}
-                {error && (
-                  <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md text-sm">
-                    {error}
-                  </div>
-                )}
-                {success && (
-                  <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-md text-sm">
-                    {success}
-                  </div>
-                )}
 
                 <form onSubmit={handleLogin} className="space-y-4">
                   {/* Login Method Toggle */}
