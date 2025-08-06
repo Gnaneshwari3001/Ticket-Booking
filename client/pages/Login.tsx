@@ -438,7 +438,12 @@ export default function Login() {
 
                   {/* Terms & Conditions */}
                   <div className="flex items-center space-x-2">
-                    <Checkbox id="terms" required />
+                    <Checkbox
+                      id="terms"
+                      checked={termsAccepted}
+                      onCheckedChange={(checked) => setTermsAccepted(checked as boolean)}
+                      required
+                    />
                     <Label htmlFor="terms" className="text-sm">
                       I agree to the{" "}
                       <Link to="/terms" className="text-railway-blue hover:underline">
