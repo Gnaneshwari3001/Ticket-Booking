@@ -30,7 +30,9 @@ import {
 
 export default function Index() {
   const [fromStation, setFromStation] = useState("");
+  const [fromStationName, setFromStationName] = useState("");
   const [toStation, setToStation] = useState("");
+  const [toStationName, setToStationName] = useState("");
   const [journeyDate, setJourneyDate] = useState("");
   const [returnDate, setReturnDate] = useState("");
   const [travelClass, setTravelClass] = useState("3A");
