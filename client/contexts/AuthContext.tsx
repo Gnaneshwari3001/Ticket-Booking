@@ -282,7 +282,14 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   };
 
   useEffect(() => {
+    // Set a timeout to prevent infinite loading
+    const loadingTimeout = setTimeout(() => {
+      console.warn('Auth loading timeout - proceeding without Firebase');
+      setLoading(false);
+    }, 5000); // 5 second timeout
+
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      clearTimeout(loadingTimeout); // Clear timeout since auth state changed
       setCurrentUser(user);
       if (user) {
         await loadUserProfile(user);
@@ -292,7 +299,10 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       setLoading(false);
     });
 
-    return unsubscribe;
+    return () => {
+      clearTimeout(loadingTimeout);
+      unsubscribe();
+    };
   }, []);
 
   const value: AuthContextType = {
