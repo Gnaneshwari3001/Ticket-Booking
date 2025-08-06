@@ -34,15 +34,7 @@ const App = () => (
               />
             }
           />
-          <Route
-            path="/pnr-status"
-            element={
-              <Placeholder
-                title="PNR Status Check"
-                description="Check your booking status and get live updates on your journey."
-              />
-            }
-          />
+          <Route path="/pnr-status" element={<PNRStatus />} />
           <Route
             path="/booking-history"
             element={
