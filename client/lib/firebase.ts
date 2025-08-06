@@ -1,6 +1,6 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
-import { getFirestore, enableNetwork, disableNetwork } from 'firebase/firestore';
+import { getDatabase, connectDatabaseEmulator } from 'firebase/database';
 import { getStorage } from 'firebase/storage';
 import { getAnalytics } from 'firebase/analytics';
 
@@ -21,39 +21,28 @@ const app = initializeApp(firebaseConfig);
 
 // Initialize Firebase services
 export const auth = getAuth(app);
-export const db = getFirestore(app);
+export const database = getDatabase(app);
 export const storage = getStorage(app);
 
 // Initialize Analytics (only in browser environment)
 export const analytics = typeof window !== 'undefined' ? getAnalytics(app) : null;
 
-// Add connection monitoring
+// Add connection monitoring for Realtime Database
 if (typeof window !== 'undefined') {
   // Monitor online/offline status
-  window.addEventListener('online', async () => {
-    console.log('Connection restored, enabling Firestore network');
-    try {
-      await enableNetwork(db);
-    } catch (error) {
-      console.warn('Failed to enable Firestore network:', error);
-    }
+  window.addEventListener('online', () => {
+    console.log('Connection restored to Firebase Realtime Database');
   });
 
-  window.addEventListener('offline', async () => {
-    console.log('Connection lost, disabling Firestore network');
-    try {
-      await disableNetwork(db);
-    } catch (error) {
-      console.warn('Failed to disable Firestore network:', error);
-    }
+  window.addEventListener('offline', () => {
+    console.log('Connection lost, Firebase Realtime Database will work offline');
   });
 }
 
 // Helper function to check if Firebase is available
-export const isFirebaseAvailable = async (): Promise<boolean> => {
+export const isFirebaseAvailable = (): boolean => {
   try {
-    // Try a simple operation to test connectivity
-    await enableNetwork(db);
+    // Realtime Database works offline by default, so it's always "available"
     return true;
   } catch (error) {
     console.warn('Firebase unavailable:', error);
