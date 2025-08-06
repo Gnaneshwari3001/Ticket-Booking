@@ -26,42 +26,57 @@ import Placeholder from "./pages/Placeholder";
 
 const queryClient = new QueryClient();
 
-const App = () => (
-  <ErrorBoundary>
-    <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <AuthProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
-            <Header />
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/search-results" element={<SearchResults />} />
-              <Route path="/enhanced-search-results" element={<EnhancedSearchResults />} />
-              <Route path="/real-data-search-results" element={<RealDataSearchResults />} />
-              <Route path="/booking" element={<BookingPage />} />
-              <Route path="/booking-success" element={<BookingSuccess />} />
-              <Route path="/pnr-status" element={<PNRStatus />} />
-              <Route path="/booking-history" element={<BookingHistory />} />
-              <Route path="/live-tracking" element={<LiveTracking />} />
-              <Route
-                path="/profile"
-                element={
-                  <Placeholder
-                    title="User Profile"
-                    description="Manage your personal details, travel preferences, and account settings."
-                  />
-                }
-              />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </BrowserRouter>
-        </AuthProvider>
-      </TooltipProvider>
-    </QueryClientProvider>
-  </ErrorBoundary>
-);
+const App = () => {
+  useEffect(() => {
+    // Initialize database with sample data when app starts
+    initializeDatabase().then((initialized) => {
+      if (initialized) {
+        console.log('✅ Realtime Database initialized with sample railway data');
+      } else {
+        console.log('ℹ️ Realtime Database already contains data');
+      }
+    }).catch((error) => {
+      console.error('❌ Failed to initialize database:', error);
+    });
+  }, []);
+
+  return (
+    <ErrorBoundary>
+      <QueryClientProvider client={queryClient}>
+        <TooltipProvider>
+          <AuthProvider>
+            <Toaster />
+            <Sonner />
+            <BrowserRouter>
+              <Header />
+              <Routes>
+                <Route path="/" element={<Index />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/search-results" element={<SearchResults />} />
+                <Route path="/enhanced-search-results" element={<EnhancedSearchResults />} />
+                <Route path="/real-data-search-results" element={<RealDataSearchResults />} />
+                <Route path="/booking" element={<BookingPage />} />
+                <Route path="/booking-success" element={<BookingSuccess />} />
+                <Route path="/pnr-status" element={<PNRStatus />} />
+                <Route path="/booking-history" element={<BookingHistory />} />
+                <Route path="/live-tracking" element={<LiveTracking />} />
+                <Route
+                  path="/profile"
+                  element={
+                    <Placeholder
+                      title="User Profile"
+                      description="Manage your personal details, travel preferences, and account settings."
+                    />
+                  }
+                />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </BrowserRouter>
+          </AuthProvider>
+        </TooltipProvider>
+      </QueryClientProvider>
+    </ErrorBoundary>
+  );
+};
 
 createRoot(document.getElementById("root")!).render(<App />);
