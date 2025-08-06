@@ -117,28 +117,27 @@ export function StationSearch({
                 <CommandGroup key={state} heading={state}>
                   {stations.map((station) => (
                     <CommandItem
-                      key={station.stationCode}
-                      value={`${station.stationName} ${station.stationCode} ${station.city}`}
+                      key={station.station_code}
+                      value={`${station.station_name} ${station.station_code} ${station.city}`}
                       onSelect={() => handleStationSelect(station)}
                       className="flex items-center justify-between p-3"
                     >
                       <div className="flex flex-col">
                         <div className="flex items-center gap-2">
-                          <span className="font-medium">{station.stationName}</span>
+                          <span className="font-medium">{station.station_name}</span>
                           <span className="text-xs bg-muted px-1.5 py-0.5 rounded">
-                            {station.stationCode}
+                            {station.station_code}
                           </span>
                         </div>
                         <span className="text-xs text-muted-foreground">
                           {station.city}, {station.state}
-                          {station.zone && ` • ${station.zone} Zone`}
                         </span>
                       </div>
                       <Check
                         className={cn(
                           "h-4 w-4",
-                          currentStation?.stationCode === station.stationCode 
-                            ? "opacity-100" 
+                          currentStation?.station_code === station.station_code
+                            ? "opacity-100"
                             : "opacity-0"
                         )}
                       />
