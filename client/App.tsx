@@ -23,55 +23,57 @@ import Placeholder from "./pages/Placeholder";
 const queryClient = new QueryClient();
 
 const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <AuthProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <Header />
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/search-results" element={<SearchResults />} />
-            <Route path="/enhanced-search-results" element={<EnhancedSearchResults />} />
-            <Route path="/real-data-search-results" element={<RealDataSearchResults />} />
-            <Route path="/booking" element={<BookingPage />} />
-            <Route path="/booking-success" element={<BookingSuccess />} />
-            <Route path="/pnr-status" element={<PNRStatus />} />
-            <Route
-              path="/booking-history"
-              element={
-                <Placeholder
-                  title="Booking History"
-                  description="View and manage all your past and upcoming train bookings."
-                />
-              }
-            />
-            <Route
-              path="/live-tracking"
-              element={
-                <Placeholder
-                  title="Live Train Tracking"
-                  description="Track trains in real-time with GPS location and arrival estimates."
-                />
-              }
-            />
-            <Route
-              path="/profile"
-              element={
-                <Placeholder
-                  title="User Profile"
-                  description="Manage your personal details, travel preferences, and account settings."
-                />
-              }
-            />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
-      </AuthProvider>
-    </TooltipProvider>
-  </QueryClientProvider>
+  <ErrorBoundary>
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <AuthProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <Header />
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/search-results" element={<SearchResults />} />
+              <Route path="/enhanced-search-results" element={<EnhancedSearchResults />} />
+              <Route path="/real-data-search-results" element={<RealDataSearchResults />} />
+              <Route path="/booking" element={<BookingPage />} />
+              <Route path="/booking-success" element={<BookingSuccess />} />
+              <Route path="/pnr-status" element={<PNRStatus />} />
+              <Route
+                path="/booking-history"
+                element={
+                  <Placeholder
+                    title="Booking History"
+                    description="View and manage all your past and upcoming train bookings."
+                  />
+                }
+              />
+              <Route
+                path="/live-tracking"
+                element={
+                  <Placeholder
+                    title="Live Train Tracking"
+                    description="Track trains in real-time with GPS location and arrival estimates."
+                  />
+                }
+              />
+              <Route
+                path="/profile"
+                element={
+                  <Placeholder
+                    title="User Profile"
+                    description="Manage your personal details, travel preferences, and account settings."
+                  />
+                }
+              />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </BrowserRouter>
+        </AuthProvider>
+      </TooltipProvider>
+    </QueryClientProvider>
+  </ErrorBoundary>
 );
 
 createRoot(document.getElementById("root")!).render(<App />);
