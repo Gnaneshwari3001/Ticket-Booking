@@ -258,7 +258,7 @@ export default function Index() {
                 disabled={!fromStation || !toStation || !journeyDate}
               >
                 <Link
-                  to={`/enhanced-search-results?from=${fromStation}&to=${toStation}&date=${journeyDate}&class=${travelClass}&quota=${quota}`}
+                  to={`/real-data-search-results?from=${fromStation}&to=${toStation}&date=${journeyDate}&class=${travelClass}&quota=${quota}`}
                   className="flex items-center gap-2"
                 >
                   <Search className="h-5 w-5" />
