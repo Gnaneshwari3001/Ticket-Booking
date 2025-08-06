@@ -66,33 +66,58 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   // Sign up with email and password
   const signup = async (email: string, password: string, userData: Partial<UserProfile>) => {
-    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-    const user = userCredential.user;
+    try {
+      console.log("Creating user with Firebase Auth...");
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+      console.log("User created successfully:", user.uid);
 
-    // Update display name
-    if (userData.displayName) {
-      await updateProfile(user, { displayName: userData.displayName });
+      // Update display name
+      if (userData.displayName) {
+        console.log("Updating display name...");
+        await updateProfile(user, { displayName: userData.displayName });
+      }
+
+      // Create user profile in Firestore
+      const profile: UserProfile = {
+        uid: user.uid,
+        email: user.email,
+        displayName: userData.displayName || null,
+        phoneNumber: userData.phoneNumber || null,
+        photoURL: null,
+        dateOfBirth: userData.dateOfBirth,
+        gender: userData.gender,
+        address: userData.address,
+        emergencyContact: userData.emergencyContact,
+        preferredClass: userData.preferredClass || '3A',
+        kycVerified: false,
+        createdAt: new Date(),
+        lastLogin: new Date()
+      };
+
+      console.log("Creating user profile in Firestore...");
+      try {
+        await setDoc(doc(db, 'users', user.uid), profile);
+        console.log("User profile created successfully");
+        setUserProfile(profile);
+      } catch (firestoreError) {
+        console.warn("Failed to create user profile in Firestore:", firestoreError);
+        // Don't fail the signup if Firestore fails, just log the error
+        setUserProfile({
+          uid: user.uid,
+          email: user.email,
+          displayName: userData.displayName || null,
+          phoneNumber: userData.phoneNumber || null,
+          photoURL: null,
+          kycVerified: false,
+          createdAt: new Date(),
+          lastLogin: new Date()
+        });
+      }
+    } catch (error) {
+      console.error("Signup error:", error);
+      throw error; // Re-throw to be handled by the calling function
     }
-
-    // Create user profile in Firestore
-    const profile: UserProfile = {
-      uid: user.uid,
-      email: user.email,
-      displayName: userData.displayName || null,
-      phoneNumber: userData.phoneNumber || null,
-      photoURL: null,
-      dateOfBirth: userData.dateOfBirth,
-      gender: userData.gender,
-      address: userData.address,
-      emergencyContact: userData.emergencyContact,
-      preferredClass: userData.preferredClass || '3A',
-      kycVerified: false,
-      createdAt: new Date(),
-      lastLogin: new Date()
-    };
-
-    await setDoc(doc(db, 'users', user.uid), profile);
-    setUserProfile(profile);
   };
 
   // Sign in with email and password
