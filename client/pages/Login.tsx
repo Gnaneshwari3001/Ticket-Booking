@@ -94,6 +94,12 @@ export default function Login() {
       return;
     }
 
+    if (!termsAccepted) {
+      setError("Please accept the Terms & Conditions to create an account");
+      setIsLoading(false);
+      return;
+    }
+
     try {
       console.log("Attempting to create account with:", { email, firstName, lastName, phone, dateOfBirth });
 
