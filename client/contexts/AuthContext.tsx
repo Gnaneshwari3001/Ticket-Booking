@@ -146,10 +146,10 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   // Verify phone OTP
   const verifyPhoneOTP = async (confirmationResult: ConfirmationResult, otp: string) => {
     await confirmationResult.confirm(otp);
-    
+
     // Update last login
     if (auth.currentUser) {
-      await updateLastLogin(auth.currentUser.uid);
+      await userService.updateLastLogin(auth.currentUser.uid);
     }
   };
 
@@ -173,24 +173,15 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       setUserProfile({ ...userProfile, ...userData });
     }
 
-    // Try to update Firestore
+    // Try to update Realtime Database
     try {
-      const userRef = doc(db, 'users', currentUser.uid);
-      await setDoc(userRef, userData, { merge: true });
-      console.log("User profile updated in Firestore");
+      await userService.updateUserProfile(currentUser.uid, userData);
+      console.log("User profile updated in Realtime Database");
     } catch (error: any) {
-      console.warn("Failed to update user profile in Firestore:", error);
-
-      if (error.code === 'failed-precondition' ||
-          error.code === 'unavailable' ||
-          error.message?.includes('offline')) {
-        console.log("Update will be synced when back online");
-        // The local state is already updated, so the user sees the change
-        // Firebase will sync when back online
-      } else {
-        console.error("Failed to update user profile:", error);
-        // Could show a toast notification here
-      }
+      console.warn("Failed to update user profile in Realtime Database:", error);
+      console.log("Update will be synced when back online");
+      // The local state is already updated, so the user sees the change
+      // Firebase Realtime Database will sync when back online
     }
   };
 
