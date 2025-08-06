@@ -23,15 +23,7 @@ const App = () => (
         <Header />
         <Routes>
           <Route path="/" element={<Index />} />
-          <Route
-            path="/login"
-            element={
-              <Placeholder
-                title="Login & Registration"
-                description="Secure authentication with email, phone OTP, and social login options."
-              />
-            }
-          />
+          <Route path="/login" element={<Login />} />
           <Route
             path="/search-results"
             element={
