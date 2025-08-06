@@ -153,16 +153,16 @@ export function StationSearch({
   );
 }
 
-// Popular station pairs for quick selection
+// Popular station pairs for quick selection based on CSV data
 export const POPULAR_ROUTES = [
-  { from: "NDLS", fromName: "New Delhi", to: "BCT", toName: "Mumbai Central" },
-  { from: "MAS", fromName: "Chennai Central", to: "SBC", toName: "KSR Bengaluru" },
-  { from: "HWH", fromName: "Howrah Jn", to: "NDLS", toName: "New Delhi" },
-  { from: "PUNE", fromName: "Pune Jn", to: "BCT", toName: "Mumbai Central" },
+  { from: "SC", fromName: "Secunderabad Jn", to: "NDLS", toName: "New Delhi" },
+  { from: "HYB", fromName: "Hyderabad Deccan", to: "MAS", toName: "Chennai Central" },
   { from: "SC", fromName: "Secunderabad Jn", to: "MAS", toName: "Chennai Central" },
-  { from: "ADI", fromName: "Ahmedabad Jn", to: "BCT", toName: "Mumbai Central" },
-  { from: "JP", fromName: "Jaipur", to: "NDLS", toName: "New Delhi" },
-  { from: "LJN", fromName: "Lucknow Jn", to: "NDLS", toName: "New Delhi" },
+  { from: "HYB", fromName: "Hyderabad Deccan", to: "BCT", toName: "Mumbai Central" },
+  { from: "KCG", fromName: "Kacheguda", to: "SBC", toName: "KSR Bengaluru" },
+  { from: "SC", fromName: "Secunderabad Jn", to: "BZA", toName: "Vijayawada Jn" },
+  { from: "HYB", fromName: "Hyderabad Deccan", to: "GDWL", toName: "Gadwal" },
+  { from: "KCG", fromName: "Kacheguda", to: "KRNT", toName: "Kurnool Town" },
 ];
 
 interface PopularRoutesProps {
