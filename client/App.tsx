@@ -10,6 +10,7 @@ import { Header } from "./components/Header";
 import Index from "./pages/Index";
 import Login from "./pages/Login";
 import PNRStatus from "./pages/PNRStatus";
+import SearchResults from "./pages/SearchResults";
 import NotFound from "./pages/NotFound";
 import Placeholder from "./pages/Placeholder";
 
