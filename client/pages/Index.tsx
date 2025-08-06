@@ -70,9 +70,19 @@ export default function Index() {
   ];
 
   const handleSwapStations = () => {
-    const temp = fromStation;
+    const tempCode = fromStation;
+    const tempName = fromStationName;
     setFromStation(toStation);
-    setToStation(temp);
+    setFromStationName(toStationName);
+    setToStation(tempCode);
+    setToStationName(tempName);
+  };
+
+  const handlePopularRouteSelect = (fromCode: string, fromName: string, toCode: string, toName: string) => {
+    setFromStation(fromCode);
+    setFromStationName(fromName);
+    setToStation(toCode);
+    setToStationName(toName);
   };
 
   const today = new Date().toISOString().split('T')[0];
