@@ -139,41 +139,43 @@ export default function Index() {
             <CardContent className="space-y-6">
               {/* Station Selection */}
               <div className="grid md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="from" className="text-sm font-medium flex items-center gap-1">
-                    <MapPin className="h-4 w-4" />
-                    From
-                  </Label>
-                  <Input
-                    id="from"
-                    placeholder="Enter source station"
-                    value={fromStation}
-                    onChange={(e) => setFromStation(e.target.value)}
-                    className="h-12"
-                  />
-                </div>
-                <div className="space-y-2 relative">
-                  <Label htmlFor="to" className="text-sm font-medium flex items-center gap-1">
-                    <MapPin className="h-4 w-4" />
-                    To
-                  </Label>
-                  <Input
+                <StationSearch
+                  id="from"
+                  label="From"
+                  placeholder="Select source station"
+                  value={fromStation}
+                  onChange={(code, name) => {
+                    setFromStation(code);
+                    setFromStationName(name);
+                  }}
+                />
+                <div className="relative">
+                  <StationSearch
                     id="to"
-                    placeholder="Enter destination station"
+                    label="To"
+                    placeholder="Select destination station"
                     value={toStation}
-                    onChange={(e) => setToStation(e.target.value)}
-                    className="h-12"
+                    onChange={(code, name) => {
+                      setToStation(code);
+                      setToStationName(name);
+                    }}
                   />
                   <Button
                     type="button"
                     variant="ghost"
                     size="sm"
                     onClick={handleSwapStations}
-                    className="absolute top-8 right-2 h-8 w-8 p-0"
+                    className="absolute top-8 right-2 h-8 w-8 p-0 z-10"
+                    title="Swap stations"
                   >
                     <ArrowRightLeft className="h-4 w-4" />
                   </Button>
                 </div>
+              </div>
+
+              {/* Popular Routes */}
+              <div className="border-t pt-4">
+                <PopularRoutes onRouteSelect={handlePopularRouteSelect} />
               </div>
 
               {/* Date Selection */}
