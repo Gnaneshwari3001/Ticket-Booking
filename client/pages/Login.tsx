@@ -327,6 +327,8 @@ export default function Login() {
                         id="mobile"
                         type="tel"
                         placeholder="Enter your mobile number"
+                        value={phone}
+                        onChange={(e) => setPhone(e.target.value)}
                         required
                         className="pl-10"
                       />
