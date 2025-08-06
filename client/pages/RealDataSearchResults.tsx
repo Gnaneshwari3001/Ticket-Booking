@@ -575,11 +575,16 @@ export default function RealDataSearchResults() {
                                 <ChevronDown className="h-4 w-4 ml-1" />
                               )}
                             </Button>
-                            <Button 
+                            <Button
                               size="sm"
                               disabled={!Object.values(train.classes).some(cls => cls.status.includes("Available"))}
+                              asChild
                             >
-                              Book Now
+                              <Link
+                                to={`/booking?train=${train.train_number}&from=${fromStation}&to=${toStation}&date=${journeyDate}&class=${Object.keys(train.classes)[0]}`}
+                              >
+                                Book Now
+                              </Link>
                             </Button>
                           </div>
                         </div>
