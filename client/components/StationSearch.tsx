@@ -15,7 +15,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
-import { MAJOR_STATIONS } from "@/lib/railway-schema";
+import { RailwayDataService, StationData } from "@/lib/railway-data";
 import { MapPin, Check, ChevronsUpDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 
