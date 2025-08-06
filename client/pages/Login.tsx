@@ -59,18 +59,64 @@ export default function Login() {
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+    setSuccess("");
     setIsLoading(true);
 
+    // Validation
+    if (!firstName.trim() || !lastName.trim()) {
+      setError("Please enter your first and last name");
+      setIsLoading(false);
+      return;
+    }
+
+    if (!email.trim()) {
+      setError("Please enter your email address");
+      setIsLoading(false);
+      return;
+    }
+
+    if (!phone.trim()) {
+      setError("Please enter your mobile number");
+      setIsLoading(false);
+      return;
+    }
+
+    if (!dateOfBirth) {
+      setError("Please enter your date of birth");
+      setIsLoading(false);
+      return;
+    }
+
+    if (password.length < 6) {
+      setError("Password must be at least 6 characters long");
+      setIsLoading(false);
+      return;
+    }
+
     try {
+      console.log("Attempting to create account with:", { email, firstName, lastName, phone, dateOfBirth });
+
       await signup(email, password, {
         displayName: `${firstName} ${lastName}`,
         phoneNumber: phone,
         dateOfBirth
       });
-      setSuccess("Account created successfully!");
-      setTimeout(() => navigate("/"), 1000);
+
+      setSuccess("Account created successfully! Redirecting...");
+      setTimeout(() => navigate("/"), 2000);
     } catch (error: any) {
-      setError(error.message || "Failed to create account");
+      console.error("Signup error:", error);
+
+      // Handle specific Firebase errors
+      if (error.code === 'auth/email-already-in-use') {
+        setError("An account with this email already exists. Please use a different email or try logging in.");
+      } else if (error.code === 'auth/weak-password') {
+        setError("Password is too weak. Please choose a stronger password.");
+      } else if (error.code === 'auth/invalid-email') {
+        setError("Please enter a valid email address.");
+      } else {
+        setError(error.message || "Failed to create account. Please try again.");
+      }
     } finally {
       setIsLoading(false);
     }
