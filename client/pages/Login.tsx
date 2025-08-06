@@ -343,6 +343,8 @@ export default function Login() {
                       <Input
                         id="dob"
                         type="date"
+                        value={dateOfBirth}
+                        onChange={(e) => setDateOfBirth(e.target.value)}
                         required
                         className="pl-10"
                       />
