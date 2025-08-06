@@ -185,27 +185,15 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     }
   };
 
-  // Update last login timestamp
-  const updateLastLogin = async (uid: string) => {
-    try {
-      const userRef = doc(db, 'users', uid);
-      await setDoc(userRef, { lastLogin: new Date() }, { merge: true });
-      console.log("Last login updated");
-    } catch (error: any) {
-      console.warn("Failed to update last login:", error);
-      // Don't throw error for last login updates - it's not critical
-    }
-  };
 
-  // Load user profile from Firestore
+  // Load user profile from Realtime Database
   const loadUserProfile = async (user: User) => {
     try {
-      // Try to get user profile from Firestore
-      const userDoc = await getDoc(doc(db, 'users', user.uid));
-      if (userDoc.exists()) {
-        const profileData = userDoc.data() as UserProfile;
+      // Try to get user profile from Realtime Database
+      const profileData = await userService.getUserProfile(user.uid);
+      if (profileData) {
         setUserProfile(profileData);
-        console.log("User profile loaded from Firestore");
+        console.log("User profile loaded from Realtime Database");
       } else {
         // Create basic profile if it doesn't exist
         console.log("Creating new user profile...");
@@ -216,59 +204,37 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
           phoneNumber: user.phoneNumber,
           photoURL: user.photoURL,
           kycVerified: false,
-          createdAt: new Date(),
-          lastLogin: new Date()
+          createdAt: new Date().toISOString(),
+          lastLogin: new Date().toISOString()
         };
 
         try {
-          await setDoc(doc(db, 'users', user.uid), basicProfile);
+          await userService.createOrUpdateUser(basicProfile);
           setUserProfile(basicProfile);
           console.log("New user profile created successfully");
         } catch (createError) {
-          console.warn("Failed to create user profile in Firestore, using local profile:", createError);
+          console.warn("Failed to create user profile in Realtime Database, using local profile:", createError);
           setUserProfile(basicProfile);
         }
       }
     } catch (error: any) {
       console.error('Error loading user profile:', error);
 
-      // Handle offline or connectivity issues
-      if (error.code === 'failed-precondition' ||
-          error.code === 'unavailable' ||
-          error.message?.includes('offline') ||
-          error.message?.includes('client is offline')) {
+      console.log("Database connection issue, creating temporary user profile");
 
-        console.log("Firebase is offline, creating temporary user profile");
+      // Create a basic profile from Firebase Auth data
+      const offlineProfile: UserProfile = {
+        uid: user.uid,
+        email: user.email,
+        displayName: user.displayName,
+        phoneNumber: user.phoneNumber,
+        photoURL: user.photoURL,
+        kycVerified: false,
+        createdAt: new Date().toISOString(),
+        lastLogin: new Date().toISOString()
+      };
 
-        // Create a basic profile from Firebase Auth data when offline
-        const offlineProfile: UserProfile = {
-          uid: user.uid,
-          email: user.email,
-          displayName: user.displayName,
-          phoneNumber: user.phoneNumber,
-          photoURL: user.photoURL,
-          kycVerified: false,
-          createdAt: new Date(),
-          lastLogin: new Date()
-        };
-
-        setUserProfile(offlineProfile);
-      } else {
-        // For other errors, still create a basic profile to not break the app
-        console.warn("Unknown Firestore error, creating fallback profile");
-        const fallbackProfile: UserProfile = {
-          uid: user.uid,
-          email: user.email,
-          displayName: user.displayName,
-          phoneNumber: user.phoneNumber,
-          photoURL: user.photoURL,
-          kycVerified: false,
-          createdAt: new Date(),
-          lastLogin: new Date()
-        };
-
-        setUserProfile(fallbackProfile);
-      }
+      setUserProfile(offlineProfile);
     }
   };
 
