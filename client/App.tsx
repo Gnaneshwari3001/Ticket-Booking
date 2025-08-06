@@ -42,24 +42,8 @@ const App = () => (
               <Route path="/booking" element={<BookingPage />} />
               <Route path="/booking-success" element={<BookingSuccess />} />
               <Route path="/pnr-status" element={<PNRStatus />} />
-              <Route
-                path="/booking-history"
-                element={
-                  <Placeholder
-                    title="Booking History"
-                    description="View and manage all your past and upcoming train bookings."
-                  />
-                }
-              />
-              <Route
-                path="/live-tracking"
-                element={
-                  <Placeholder
-                    title="Live Train Tracking"
-                    description="Track trains in real-time with GPS location and arrival estimates."
-                  />
-                }
-              />
+              <Route path="/booking-history" element={<BookingHistory />} />
+              <Route path="/live-tracking" element={<LiveTracking />} />
               <Route
                 path="/profile"
                 element={
