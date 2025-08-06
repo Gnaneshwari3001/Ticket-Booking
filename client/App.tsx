@@ -26,15 +26,7 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/login" element={<Login />} />
-          <Route
-            path="/search-results"
-            element={
-              <Placeholder
-                title="Train Search Results"
-                description="Browse available trains with real-time seat availability and booking options."
-              />
-            }
-          />
+          <Route path="/search-results" element={<SearchResults />} />
           <Route path="/pnr-status" element={<PNRStatus />} />
           <Route
             path="/booking-history"
