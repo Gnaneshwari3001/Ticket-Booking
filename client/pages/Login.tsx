@@ -193,12 +193,10 @@ export default function Login() {
                     <div className="relative">
                       <Input
                         id="login-credential"
-                        type={loginMethod === "email" ? "email" : "tel"}
-                        placeholder={
-                          loginMethod === "email" 
-                            ? "Enter your email address" 
-                            : "Enter your mobile number"
-                        }
+                        type="email"
+                        placeholder="Enter your email address"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
                         required
                         className="pl-10"
                       />
