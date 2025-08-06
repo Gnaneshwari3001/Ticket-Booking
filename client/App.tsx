@@ -21,6 +21,7 @@ import BookingPage from "./pages/BookingPage";
 import BookingSuccess from "./pages/BookingSuccess";
 import BookingHistory from "./pages/BookingHistory";
 import LiveTracking from "./pages/LiveTracking";
+import DatabaseTest from "./pages/DatabaseTest";
 import NotFound from "./pages/NotFound";
 import Placeholder from "./pages/Placeholder";
 
@@ -60,6 +61,7 @@ const App = () => {
                 <Route path="/pnr-status" element={<PNRStatus />} />
                 <Route path="/booking-history" element={<BookingHistory />} />
                 <Route path="/live-tracking" element={<LiveTracking />} />
+                <Route path="/database-test" element={<DatabaseTest />} />
                 <Route
                   path="/profile"
                   element={
