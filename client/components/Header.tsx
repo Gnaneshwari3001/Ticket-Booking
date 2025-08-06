@@ -22,6 +22,16 @@ import {
 } from "lucide-react";
 
 export function Header() {
+  const { currentUser, userProfile, logout } = useAuth();
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+    } catch (error) {
+      console.error('Failed to logout:', error);
+    }
+  };
+
   return (
     <header className="bg-white shadow-sm border-b border-border sticky top-0 z-50">
       <div className="container mx-auto px-4">
