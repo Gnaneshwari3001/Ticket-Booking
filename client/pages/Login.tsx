@@ -310,6 +310,8 @@ export default function Login() {
                         id="signup-email"
                         type="email"
                         placeholder="Enter your email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
                         required
                         className="pl-10"
                       />
