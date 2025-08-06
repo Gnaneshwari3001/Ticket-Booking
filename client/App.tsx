@@ -9,6 +9,8 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
 import { Header } from "./components/Header";
 import { ErrorBoundary } from "./components/ErrorBoundary";
+import { useEffect } from "react";
+import { initializeDatabase } from "./lib/init-database";
 import Index from "./pages/Index";
 import Login from "./pages/Login";
 import PNRStatus from "./pages/PNRStatus";
