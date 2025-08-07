@@ -96,13 +96,25 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       };
 
       console.log("Creating user profile in Realtime Database...");
+      console.log("Profile data to save:", profile);
+
       try {
         await userService.createOrUpdateUser(profile);
-        console.log("User profile created successfully");
+        console.log("✅ User profile created successfully in Realtime Database");
         setUserProfile(profile);
       } catch (databaseError) {
-        console.warn("Failed to create user profile in Realtime Database:", databaseError);
-        // Don't fail the signup if database fails, just log the error
+        console.error("❌ Failed to create user profile in Realtime Database:", databaseError);
+
+        // Check if it's a permission error
+        if (databaseError instanceof Error) {
+          if (databaseError.message.includes('permission') || databaseError.message.includes('PERMISSION_DENIED')) {
+            console.error('🚫 Database permission denied - please check Firebase rules');
+            throw new Error('Database permission denied. Please contact support.');
+          }
+        }
+
+        // Don't fail the signup if database fails, just log the error and set local profile
+        console.warn("⚠️ Continuing with local profile only");
         setUserProfile({
           uid: user.uid,
           email: user.email,
