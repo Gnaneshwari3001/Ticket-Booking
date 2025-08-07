@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { trainService, bookingService, userService } from "@/lib/realtime-database";
 import { initializeDatabase, resetDatabase } from "@/lib/init-database";
+import { testFirebaseConnection, testUserCreation, debugDatabaseRules } from "@/lib/firebase-debug";
 import { useAuth } from "@/contexts/AuthContext";
 import { 
   Database, 
@@ -88,6 +89,24 @@ const DatabaseTest = () => {
     }
   };
 
+  // Test Firebase connection and permissions
+  const testFirebasePermissions = async () => {
+    setLoading(true);
+    try {
+      const result = await testFirebaseConnection();
+      if (result) {
+        alert('✅ Firebase connection test passed!');
+      } else {
+        alert('❌ Firebase connection test failed! Check console for details.');
+      }
+    } catch (error) {
+      console.error('Firebase test error:', error);
+      alert('❌ Firebase test failed!');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   // Test user profile operations
   const testUserOperations = async () => {
     if (!currentUser) {
@@ -101,7 +120,7 @@ const DatabaseTest = () => {
         preferredClass: '2A',
         emergencyContact: '+91-9876543210'
       });
-      
+
       // Test reading user profile
       const profile = await userService.getUserProfile(currentUser.uid);
       console.log('User profile test successful:', profile);
@@ -110,6 +129,30 @@ const DatabaseTest = () => {
       console.error('User operations test failed:', error);
       alert('User operations test failed!');
     }
+  };
+
+  // Test user creation (simulate registration)
+  const testUserCreationProcess = async () => {
+    setLoading(true);
+    try {
+      const testUid = 'test_' + Date.now();
+      const result = await testUserCreation(testUid);
+      if (result) {
+        alert('✅ User creation test passed!');
+      } else {
+        alert('❌ User creation test failed! Check console for details.');
+      }
+    } catch (error) {
+      console.error('User creation test error:', error);
+      alert('❌ User creation test failed!');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Show debug info
+  const showDebugInfo = () => {
+    debugDatabaseRules();
   };
 
   useEffect(() => {
@@ -172,24 +215,52 @@ const DatabaseTest = () => {
               </div>
             )}
 
-            <div className="flex gap-2">
-              <Button 
-                onClick={testConnection} 
+            <div className="flex flex-wrap gap-2">
+              <Button
+                onClick={testConnection}
                 disabled={loading}
                 size="sm"
               >
                 <RefreshCw className="w-4 h-4 mr-2" />
                 Test Connection
               </Button>
-              
-              <Button 
-                onClick={testUserOperations} 
+
+              <Button
+                onClick={testFirebasePermissions}
+                disabled={loading}
+                variant="outline"
+                size="sm"
+              >
+                <Database className="w-4 h-4 mr-2" />
+                Test Permissions
+              </Button>
+
+              <Button
+                onClick={testUserCreationProcess}
+                disabled={loading}
+                variant="outline"
+                size="sm"
+              >
+                <Users className="w-4 h-4 mr-2" />
+                Test Registration
+              </Button>
+
+              <Button
+                onClick={testUserOperations}
                 disabled={loading || !currentUser}
                 variant="outline"
                 size="sm"
               >
                 <Users className="w-4 h-4 mr-2" />
                 Test User Ops
+              </Button>
+
+              <Button
+                onClick={showDebugInfo}
+                variant="secondary"
+                size="sm"
+              >
+                Debug Info
               </Button>
             </div>
           </CardContent>
