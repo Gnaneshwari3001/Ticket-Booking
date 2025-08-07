@@ -9,6 +9,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
 import { Header } from "./components/Header";
 import { ErrorBoundary } from "./components/ErrorBoundary";
+import { RegistrationDebug } from "./components/RegistrationDebug";
 import { useEffect } from "react";
 import { initializeDatabase } from "./lib/init-database";
 import Index from "./pages/Index";
@@ -75,9 +76,10 @@ const App = () => {
               </Routes>
             </BrowserRouter>
           </AuthProvider>
-        </TooltipProvider>
-      </QueryClientProvider>
-    </ErrorBoundary>
+      </TooltipProvider>
+    </QueryClientProvider>
+    <RegistrationDebug />
+  </ErrorBoundary>
   );
 };
 
