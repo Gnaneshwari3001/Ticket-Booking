@@ -73,12 +73,12 @@ const App = () => {
                   }
                 />
                 <Route path="*" element={<NotFound />} />
-              </Routes>
-            </BrowserRouter>
-          </AuthProvider>
+            </Routes>
+          </BrowserRouter>
+          <RegistrationDebug />
+        </AuthProvider>
       </TooltipProvider>
     </QueryClientProvider>
-    <RegistrationDebug />
   </ErrorBoundary>
   );
 };
