@@ -126,15 +126,30 @@ export const userService = {
   // Create or update user profile
   async createOrUpdateUser(userData: UserProfile): Promise<void> {
     try {
+      console.log('🔥 Attempting to save user profile to Realtime Database...');
+      console.log('📊 Database instance:', database ? 'Available' : 'Not available');
+      console.log('👤 User data:', userData);
+
       const userRef = ref(database, `users/${userData.uid}`);
-      await set(userRef, {
+      console.log('📍 Database reference path:', `users/${userData.uid}`);
+
+      const dataToSave = {
         ...userData,
         createdAt: userData.createdAt || serverTimestamp(),
         updatedAt: serverTimestamp()
-      });
-      console.log('User profile saved to Realtime Database');
+      };
+
+      console.log('💾 Data to save:', dataToSave);
+
+      await set(userRef, dataToSave);
+      console.log('✅ User profile saved to Realtime Database successfully');
     } catch (error) {
-      console.error('Error saving user profile:', error);
+      console.error('❌ Error saving user profile:', error);
+      console.error('🔍 Error details:', {
+        name: error instanceof Error ? error.name : 'Unknown',
+        message: error instanceof Error ? error.message : 'Unknown error',
+        stack: error instanceof Error ? error.stack : 'No stack trace'
+      });
       throw error;
     }
   },
