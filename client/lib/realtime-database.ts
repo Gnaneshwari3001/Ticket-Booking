@@ -179,8 +179,14 @@ export const userService = {
   async updateUserProfile(uid: string, userData: Partial<UserProfile>): Promise<void> {
     try {
       const userRef = ref(database, `users/${uid}`);
+
+      // Filter out undefined values - Firebase Realtime Database doesn't allow them
+      const cleanUserData = Object.fromEntries(
+        Object.entries(userData).filter(([_, value]) => value !== undefined)
+      );
+
       await update(userRef, {
-        ...userData,
+        ...cleanUserData,
         updatedAt: serverTimestamp()
       });
       console.log('User profile updated in Realtime Database');
