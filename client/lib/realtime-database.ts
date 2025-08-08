@@ -11,9 +11,9 @@ import {
   limitToFirst,
   onValue,
   off,
-  serverTimestamp
-} from 'firebase/database';
-import { database } from './firebase';
+  serverTimestamp,
+} from "firebase/database";
+import { database } from "./firebase";
 
 // Types for Realtime Database documents
 export interface Train {
@@ -63,8 +63,8 @@ export interface Booking {
     berthPreference?: string;
   }[];
   totalFare: number;
-  status: 'confirmed' | 'rac' | 'waitingList' | 'cancelled';
-  paymentStatus: 'pending' | 'paid' | 'refunded';
+  status: "confirmed" | "rac" | "waitingList" | "cancelled";
+  paymentStatus: "pending" | "paid" | "refunded";
   paymentId?: string;
   cancellationCharges?: number;
   refundAmount?: number;
@@ -126,34 +126,37 @@ export const userService = {
   // Create or update user profile
   async createOrUpdateUser(userData: UserProfile): Promise<void> {
     try {
-      console.log('🔥 Attempting to save user profile to Realtime Database...');
-      console.log('📊 Database instance:', database ? 'Available' : 'Not available');
-      console.log('👤 User data:', userData);
+      console.log("🔥 Attempting to save user profile to Realtime Database...");
+      console.log(
+        "📊 Database instance:",
+        database ? "Available" : "Not available",
+      );
+      console.log("👤 User data:", userData);
 
       const userRef = ref(database, `users/${userData.uid}`);
-      console.log('📍 Database reference path:', `users/${userData.uid}`);
+      console.log("📍 Database reference path:", `users/${userData.uid}`);
 
       // Filter out undefined values - Firebase Realtime Database doesn't allow them
       const cleanUserData = Object.fromEntries(
-        Object.entries(userData).filter(([_, value]) => value !== undefined)
+        Object.entries(userData).filter(([_, value]) => value !== undefined),
       );
 
       const dataToSave = {
         ...cleanUserData,
         createdAt: cleanUserData.createdAt || serverTimestamp(),
-        updatedAt: serverTimestamp()
+        updatedAt: serverTimestamp(),
       };
 
-      console.log('💾 Data to save (filtered):', dataToSave);
+      console.log("💾 Data to save (filtered):", dataToSave);
 
       await set(userRef, dataToSave);
-      console.log('✅ User profile saved to Realtime Database successfully');
+      console.log("✅ User profile saved to Realtime Database successfully");
     } catch (error) {
-      console.error('❌ Error saving user profile:', error);
-      console.error('🔍 Error details:', {
-        name: error instanceof Error ? error.name : 'Unknown',
-        message: error instanceof Error ? error.message : 'Unknown error',
-        stack: error instanceof Error ? error.stack : 'No stack trace'
+      console.error("❌ Error saving user profile:", error);
+      console.error("🔍 Error details:", {
+        name: error instanceof Error ? error.name : "Unknown",
+        message: error instanceof Error ? error.message : "Unknown error",
+        stack: error instanceof Error ? error.stack : "No stack trace",
       });
       throw error;
     }
@@ -164,34 +167,37 @@ export const userService = {
     try {
       const userRef = ref(database, `users/${uid}`);
       const snapshot = await get(userRef);
-      
+
       if (snapshot.exists()) {
         return snapshot.val() as UserProfile;
       }
       return null;
     } catch (error) {
-      console.error('Error getting user profile:', error);
+      console.error("Error getting user profile:", error);
       throw error;
     }
   },
 
   // Update user profile
-  async updateUserProfile(uid: string, userData: Partial<UserProfile>): Promise<void> {
+  async updateUserProfile(
+    uid: string,
+    userData: Partial<UserProfile>,
+  ): Promise<void> {
     try {
       const userRef = ref(database, `users/${uid}`);
 
       // Filter out undefined values - Firebase Realtime Database doesn't allow them
       const cleanUserData = Object.fromEntries(
-        Object.entries(userData).filter(([_, value]) => value !== undefined)
+        Object.entries(userData).filter(([_, value]) => value !== undefined),
       );
 
       await update(userRef, {
         ...cleanUserData,
-        updatedAt: serverTimestamp()
+        updatedAt: serverTimestamp(),
       });
-      console.log('User profile updated in Realtime Database');
+      console.log("User profile updated in Realtime Database");
     } catch (error) {
-      console.error('Error updating user profile:', error);
+      console.error("Error updating user profile:", error);
       throw error;
     }
   },
@@ -201,36 +207,41 @@ export const userService = {
     try {
       const userRef = ref(database, `users/${uid}/lastLogin`);
       await set(userRef, serverTimestamp());
-      console.log('Last login updated');
+      console.log("Last login updated");
     } catch (error) {
-      console.warn('Failed to update last login:', error);
+      console.warn("Failed to update last login:", error);
     }
-  }
+  },
 };
 
 // Train Services
 export const trainService = {
   // Add new train
-  async addTrain(trainData: Omit<Train, 'id' | 'createdAt' | 'updatedAt'>): Promise<string> {
+  async addTrain(
+    trainData: Omit<Train, "id" | "createdAt" | "updatedAt">,
+  ): Promise<string> {
     try {
-      const trainsRef = ref(database, 'trains');
+      const trainsRef = ref(database, "trains");
       const newTrainRef = push(trainsRef);
-      
+
       const trainWithTimestamps = {
         ...trainData,
         createdAt: serverTimestamp(),
-        updatedAt: serverTimestamp()
+        updatedAt: serverTimestamp(),
       };
-      
+
       await set(newTrainRef, trainWithTimestamps);
-      
+
       // Also add to trains by number index for faster lookup
-      const trainByNumberRef = ref(database, `trainsByNumber/${trainData.number}`);
+      const trainByNumberRef = ref(
+        database,
+        `trainsByNumber/${trainData.number}`,
+      );
       await set(trainByNumberRef, newTrainRef.key);
-      
+
       return newTrainRef.key!;
     } catch (error) {
-      console.error('Error adding train:', error);
+      console.error("Error adding train:", error);
       throw error;
     }
   },
@@ -238,22 +249,22 @@ export const trainService = {
   // Get all trains
   async getAllTrains(): Promise<Train[]> {
     try {
-      const trainsRef = ref(database, 'trains');
+      const trainsRef = ref(database, "trains");
       const snapshot = await get(trainsRef);
-      
+
       if (snapshot.exists()) {
         const trains: Train[] = [];
         snapshot.forEach((childSnapshot) => {
           trains.push({
             id: childSnapshot.key!,
-            ...childSnapshot.val()
+            ...childSnapshot.val(),
           });
         });
         return trains;
       }
       return [];
     } catch (error) {
-      console.error('Error getting trains:', error);
+      console.error("Error getting trains:", error);
       throw error;
     }
   },
@@ -263,12 +274,13 @@ export const trainService = {
     try {
       const trains = await this.getAllTrains();
       // Filter trains by route (simple implementation)
-      return trains.filter(train => 
-        train.from.toLowerCase().includes(from.toLowerCase()) &&
-        train.to.toLowerCase().includes(to.toLowerCase())
+      return trains.filter(
+        (train) =>
+          train.from.toLowerCase().includes(from.toLowerCase()) &&
+          train.to.toLowerCase().includes(to.toLowerCase()),
       );
     } catch (error) {
-      console.error('Error searching trains:', error);
+      console.error("Error searching trains:", error);
       throw error;
     }
   },
@@ -279,88 +291,104 @@ export const trainService = {
       // First check the index
       const indexRef = ref(database, `trainsByNumber/${trainNumber}`);
       const indexSnapshot = await get(indexRef);
-      
+
       if (indexSnapshot.exists()) {
         const trainId = indexSnapshot.val();
         const trainRef = ref(database, `trains/${trainId}`);
         const trainSnapshot = await get(trainRef);
-        
+
         if (trainSnapshot.exists()) {
           return {
             id: trainSnapshot.key!,
-            ...trainSnapshot.val()
+            ...trainSnapshot.val(),
           } as Train;
         }
       }
-      
+
       return null;
     } catch (error) {
-      console.error('Error getting train by number:', error);
+      console.error("Error getting train by number:", error);
       throw error;
     }
   },
 
   // Update seat availability
-  async updateSeatAvailability(trainId: string, className: string, seatsBooked: number): Promise<void> {
+  async updateSeatAvailability(
+    trainId: string,
+    className: string,
+    seatsBooked: number,
+  ): Promise<void> {
     try {
       const classRef = ref(database, `trains/${trainId}/classes/${className}`);
       const snapshot = await get(classRef);
-      
+
       if (snapshot.exists()) {
         const classData = snapshot.val();
         const newAvailableSeats = classData.availableSeats - seatsBooked;
-        
+
         let updates: any = {
           availableSeats: Math.max(0, newAvailableSeats),
-          updatedAt: serverTimestamp()
+          updatedAt: serverTimestamp(),
         };
-        
+
         if (newAvailableSeats < 0) {
-          updates.waitingList = classData.waitingList + Math.abs(newAvailableSeats);
+          updates.waitingList =
+            classData.waitingList + Math.abs(newAvailableSeats);
         }
-        
+
         await update(classRef, updates);
       }
     } catch (error) {
-      console.error('Error updating seat availability:', error);
+      console.error("Error updating seat availability:", error);
       throw error;
     }
-  }
+  },
 };
 
 // Booking Services
 export const bookingService = {
   // Create new booking
-  async createBooking(bookingData: Omit<Booking, 'id' | 'createdAt' | 'updatedAt'>): Promise<string> {
+  async createBooking(
+    bookingData: Omit<Booking, "id" | "createdAt" | "updatedAt">,
+  ): Promise<string> {
     try {
-      const bookingsRef = ref(database, 'bookings');
+      const bookingsRef = ref(database, "bookings");
       const newBookingRef = push(bookingsRef);
-      
+
       const bookingWithTimestamps = {
         ...bookingData,
         createdAt: serverTimestamp(),
-        updatedAt: serverTimestamp()
+        updatedAt: serverTimestamp(),
       };
-      
+
       await set(newBookingRef, bookingWithTimestamps);
-      
+
       // Add to user's bookings index
-      const userBookingRef = ref(database, `userBookings/${bookingData.userId}/${newBookingRef.key}`);
+      const userBookingRef = ref(
+        database,
+        `userBookings/${bookingData.userId}/${newBookingRef.key}`,
+      );
       await set(userBookingRef, true);
-      
+
       // Add to PNR index
       const pnrRef = ref(database, `bookingsByPNR/${bookingData.pnr}`);
       await set(pnrRef, newBookingRef.key);
-      
+
       // Update train seat availability
-      const train = await trainService.getTrainByNumber(bookingData.trainNumber);
+      const train = await trainService.getTrainByNumber(
+        bookingData.trainNumber,
+      );
       if (train && train.id) {
-        await trainService.updateSeatAvailability(train.id, bookingData.class, bookingData.passengers.length);
+        await trainService.updateSeatAvailability(
+          train.id,
+          bookingData.class,
+          bookingData.passengers.length,
+        );
       }
-      
+
       return newBookingRef.key!;
     } catch (error) {
-      console.error('Error creating booking:', error);
+      console.error("Error creating booking:", error);
       throw error;
     }
   },
@@ -370,14 +398,14 @@ export const bookingService = {
     try {
       const userBookingsRef = ref(database, `userBookings/${userId}`);
       const snapshot = await get(userBookingsRef);
-      
+
       if (!snapshot.exists()) {
         return [];
       }
-      
+
       const bookings: Booking[] = [];
       const bookingPromises: Promise<void>[] = [];
-      
+
       snapshot.forEach((childSnapshot) => {
         const bookingId = childSnapshot.key!;
         const promise = (async () => {
@@ -386,15 +414,15 @@ export const bookingService = {
           if (bookingSnapshot.exists()) {
             bookings.push({
               id: bookingId,
-              ...bookingSnapshot.val()
+              ...bookingSnapshot.val(),
             });
           }
         })();
         bookingPromises.push(promise);
       });
-      
+
       await Promise.all(bookingPromises);
-      
+
       // Sort by booking date (most recent first)
       return bookings.sort((a, b) => {
         const dateA = a.bookingDate?.seconds || a.bookingDate || 0;
@@ -402,7 +430,7 @@ export const bookingService = {
         return dateB - dateA;
       });
     } catch (error) {
-      console.error('Error getting user bookings:', error);
+      console.error("Error getting user bookings:", error);
       throw error;
     }
   },
@@ -413,75 +441,86 @@ export const bookingService = {
       // Check PNR index
       const pnrIndexRef = ref(database, `bookingsByPNR/${pnr}`);
       const indexSnapshot = await get(pnrIndexRef);
-      
+
       if (indexSnapshot.exists()) {
         const bookingId = indexSnapshot.val();
         const bookingRef = ref(database, `bookings/${bookingId}`);
         const bookingSnapshot = await get(bookingRef);
-        
+
         if (bookingSnapshot.exists()) {
           return {
             id: bookingId,
-            ...bookingSnapshot.val()
+            ...bookingSnapshot.val(),
           } as Booking;
         }
       }
-      
+
       return null;
     } catch (error) {
-      console.error('Error getting booking by PNR:', error);
+      console.error("Error getting booking by PNR:", error);
       throw error;
     }
   },
 
   // Cancel booking
-  async cancelBooking(bookingId: string, cancellationCharges: number): Promise<void> {
+  async cancelBooking(
+    bookingId: string,
+    cancellationCharges: number,
+  ): Promise<void> {
     try {
       const bookingRef = ref(database, `bookings/${bookingId}`);
       const snapshot = await get(bookingRef);
-      
+
       if (snapshot.exists()) {
         const booking = snapshot.val() as Booking;
         const refundAmount = booking.totalFare - cancellationCharges;
-        
+
         await update(bookingRef, {
-          status: 'cancelled',
+          status: "cancelled",
           cancellationCharges,
           refundAmount,
-          updatedAt: serverTimestamp()
+          updatedAt: serverTimestamp(),
         });
-        
+
         // Restore seat availability
         const train = await trainService.getTrainByNumber(booking.trainNumber);
         if (train && train.id) {
-          await trainService.updateSeatAvailability(train.id, booking.class, -booking.passengers.length);
+          await trainService.updateSeatAvailability(
+            train.id,
+            booking.class,
+            -booking.passengers.length,
+          );
         }
       }
     } catch (error) {
-      console.error('Error cancelling booking:', error);
+      console.error("Error cancelling booking:", error);
       throw error;
     }
   },
 
   // Update payment status
-  async updatePaymentStatus(bookingId: string, paymentStatus: string, paymentId?: string): Promise<void> {
+  async updatePaymentStatus(
+    bookingId: string,
+    paymentStatus: string,
+    paymentId?: string,
+  ): Promise<void> {
     try {
       const updateData: any = {
         paymentStatus,
-        updatedAt: serverTimestamp()
+        updatedAt: serverTimestamp(),
       };
-      
+
       if (paymentId) {
         updateData.paymentId = paymentId;
       }
-      
+
       const bookingRef = ref(database, `bookings/${bookingId}`);
       await update(bookingRef, updateData);
     } catch (error) {
-      console.error('Error updating payment status:', error);
+      console.error("Error updating payment status:", error);
       throw error;
     }
-  }
+  },
 };
 
 // PNR Status Service
@@ -494,82 +533,90 @@ export const pnrService = {
         return {
           pnr,
           currentStatus: booking.status,
-          passengers: booking.passengers.map(p => ({
+          passengers: booking.passengers.map((p) => ({
             ...p,
             bookingStatus: booking.status,
-            currentStatus: booking.status
+            currentStatus: booking.status,
           })),
-          lastUpdated: serverTimestamp()
+          lastUpdated: serverTimestamp(),
         };
       }
       return null;
     } catch (error) {
-      console.error('Error getting PNR status:', error);
+      console.error("Error getting PNR status:", error);
       throw error;
     }
-  }
+  },
 };
 
 // Live Train Tracking Service
 export const liveTrackingService = {
   // Get live train status
-  async getLiveTrainStatus(trainNumber: string): Promise<LiveTrainStatus | null> {
+  async getLiveTrainStatus(
+    trainNumber: string,
+  ): Promise<LiveTrainStatus | null> {
     try {
       const statusRef = ref(database, `liveTrainStatus/${trainNumber}`);
       const snapshot = await get(statusRef);
-      
+
       if (snapshot.exists()) {
         return snapshot.val() as LiveTrainStatus;
       }
-      
+
       // If no live status exists, create a mock one for demo
       const mockStatus: LiveTrainStatus = {
         trainNumber,
         currentLocation: {
-          stationCode: 'NDLS',
-          stationName: 'New Delhi',
+          stationCode: "NDLS",
+          stationName: "New Delhi",
           latitude: 28.6431,
-          longitude: 77.2197
+          longitude: 77.2197,
         },
         nextStation: {
-          stationCode: 'GZB',
-          stationName: 'Ghaziabad',
-          scheduledTime: '10:30',
-          estimatedTime: '10:35',
-          platform: '3'
+          stationCode: "GZB",
+          stationName: "Ghaziabad",
+          scheduledTime: "10:30",
+          estimatedTime: "10:35",
+          platform: "3",
         },
         delay: 5,
         speed: 85,
-        lastUpdated: serverTimestamp()
+        lastUpdated: serverTimestamp(),
       };
-      
+
       // Save the mock status
       await set(statusRef, mockStatus);
       return mockStatus;
     } catch (error) {
-      console.error('Error getting live train status:', error);
+      console.error("Error getting live train status:", error);
       throw error;
     }
   },
 
   // Update live train status (for admin/system use)
-  async updateLiveTrainStatus(trainNumber: string, statusData: Partial<LiveTrainStatus>): Promise<void> {
+  async updateLiveTrainStatus(
+    trainNumber: string,
+    statusData: Partial<LiveTrainStatus>,
+  ): Promise<void> {
     try {
       const statusRef = ref(database, `liveTrainStatus/${trainNumber}`);
       await update(statusRef, {
         ...statusData,
-        lastUpdated: serverTimestamp()
+        lastUpdated: serverTimestamp(),
       });
     } catch (error) {
-      console.error('Error updating live train status:', error);
+      console.error("Error updating live train status:", error);
       throw error;
     }
   },
 
   // Subscribe to live train status updates
-  subscribeLiveTrainStatus(trainNumber: string, callback: (status: LiveTrainStatus | null) => void): () => void {
+  subscribeLiveTrainStatus(
+    trainNumber: string,
+    callback: (status: LiveTrainStatus | null) => void,
+  ): () => void {
     const statusRef = ref(database, `liveTrainStatus/${trainNumber}`);
-    
+
     const unsubscribe = onValue(statusRef, (snapshot) => {
       if (snapshot.exists()) {
         callback(snapshot.val() as LiveTrainStatus);
@@ -577,9 +624,9 @@ export const liveTrackingService = {
         callback(null);
       }
     });
-    
-    return () => off(statusRef, 'value', unsubscribe);
-  }
+
+    return () => off(statusRef, "value", unsubscribe);
+  },
 };
 
 // Utility function to generate PNR
