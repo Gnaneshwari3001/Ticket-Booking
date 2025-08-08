@@ -30,15 +30,19 @@ const queryClient = new QueryClient();
 const App = () => {
   useEffect(() => {
     // Initialize database with sample data when app starts
-    initializeDatabase().then((initialized) => {
-      if (initialized) {
-        console.log('✅ Realtime Database initialized with sample railway data');
-      } else {
-        console.log('ℹ️ Realtime Database already contains data');
-      }
-    }).catch((error) => {
-      console.error('❌ Failed to initialize database:', error);
-    });
+    initializeDatabase()
+      .then((initialized) => {
+        if (initialized) {
+          console.log(
+            "✅ Realtime Database initialized with sample railway data",
+          );
+        } else {
+          console.log("ℹ️ Realtime Database already contains data");
+        }
+      })
+      .catch((error) => {
+        console.error("❌ Failed to initialize database:", error);
+      });
   }, []);
 
   return (
@@ -54,8 +58,14 @@ const App = () => {
                 <Route path="/" element={<Index />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/search-results" element={<SearchResults />} />
-                <Route path="/enhanced-search-results" element={<EnhancedSearchResults />} />
-                <Route path="/real-data-search-results" element={<RealDataSearchResults />} />
+                <Route
+                  path="/enhanced-search-results"
+                  element={<EnhancedSearchResults />}
+                />
+                <Route
+                  path="/real-data-search-results"
+                  element={<RealDataSearchResults />}
+                />
                 <Route path="/booking" element={<BookingPage />} />
                 <Route path="/booking-success" element={<BookingSuccess />} />
                 <Route path="/pnr-status" element={<PNRStatus />} />
@@ -72,13 +82,13 @@ const App = () => {
                   }
                 />
                 <Route path="*" element={<NotFound />} />
-            </Routes>
-          </BrowserRouter>
-          <RegistrationDebug />
-        </AuthProvider>
-      </TooltipProvider>
-    </QueryClientProvider>
-  </ErrorBoundary>
+              </Routes>
+            </BrowserRouter>
+            <RegistrationDebug />
+          </AuthProvider>
+        </TooltipProvider>
+      </QueryClientProvider>
+    </ErrorBoundary>
   );
 };
 
