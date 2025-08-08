@@ -133,13 +133,18 @@ export const userService = {
       const userRef = ref(database, `users/${userData.uid}`);
       console.log('📍 Database reference path:', `users/${userData.uid}`);
 
+      // Filter out undefined values - Firebase Realtime Database doesn't allow them
+      const cleanUserData = Object.fromEntries(
+        Object.entries(userData).filter(([_, value]) => value !== undefined)
+      );
+
       const dataToSave = {
-        ...userData,
-        createdAt: userData.createdAt || serverTimestamp(),
+        ...cleanUserData,
+        createdAt: cleanUserData.createdAt || serverTimestamp(),
         updatedAt: serverTimestamp()
       };
 
-      console.log('💾 Data to save:', dataToSave);
+      console.log('💾 Data to save (filtered):', dataToSave);
 
       await set(userRef, dataToSave);
       console.log('✅ User profile saved to Realtime Database successfully');
